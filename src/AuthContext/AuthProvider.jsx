@@ -1,13 +1,16 @@
 // AuthContext.js
 import  { createContext, useContext, useEffect, useState } from 'react';
 // import axios from 'axios';
-import { UpdateUser } from '../api/api';
+import { UpdateUser, addcertification } from '../api/api';
 const AuthContext = createContext();
 
 // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userLoaded, setUserLoaded] = useState(false);
+
+
+  
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -16,6 +19,14 @@ export const AuthProvider = ({ children }) => {
     }
     setUserLoaded(true);
   }, []);
+
+  useEffect(()=>{
+    const updateCertifications = async()=>{
+      const updatedUser= await addcertification(user);
+      updateUser(updatedUser);
+    };
+    updateCertifications();
+  },[user])
 
   const login = (userData) => {
     localStorage.setItem('user', JSON.stringify(userData));

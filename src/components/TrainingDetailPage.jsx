@@ -10,7 +10,7 @@ import {
   Grid,
 } from "@mui/material";
 import { useAuth } from "../AuthContext/AuthProvider";
-import { addComment, enrollFormation, getFormation } from "../api/api";
+import { addComment, addParticipant, enrollFormation, getFormation } from "../api/api";
 
 const TrainingDetailPage = () => {
   const { id } = useParams();
@@ -19,7 +19,6 @@ const TrainingDetailPage = () => {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   const { user,updateUser } = useAuth();
-
   useEffect(() => {
     const fetchTrainingDetails = async () => {
       try {
@@ -46,14 +45,15 @@ const TrainingDetailPage = () => {
     }
     
 
-
   }, [formation, user?.formationsInscrites]);
 
   const handleEnroll = async (trainingId) => {
     try {
       const isEnrolled = user.formationsInscrites.includes(trainingId);
-
       if (!isEnrolled) {
+        console.log(isEnrolled)
+        const getForma= await getFormation(trainingId)
+        await addParticipant(user,getForma);
         const updatedUser= await enrollFormation(user,trainingId)
         setIsEnrolled(true);
         updateUser(updatedUser)
@@ -89,19 +89,22 @@ const TrainingDetailPage = () => {
               {formation.disponible ? "Disponible" : "Non disponible"}
             </Typography>
 
-
+        {formation.participants.length<formation.capacite_max  &&
             <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleEnroll(formation.id)}
-              disabled={!formation.disponible  || isEnrolled}
-              readOnly={!formation.disponible}
-              style={{ marginTop: "16px", display:!formation.disponible}}
-            >
-              { isEnrolled
-                ? "Inscrit"
-                : "S'inscrire"}
-            </Button>
+            variant="contained"
+            color="primary"
+            onClick={() => handleEnroll(formation.id)}
+            disabled={!formation.disponible  || isEnrolled}
+            readOnly={!formation.disponible}
+            style={{ marginTop: "16px", display:!formation.disponible}}
+          >
+            { 
+            isEnrolled
+              ? "Inscrit"
+              :"S'inscrire" }
+          </Button>
+        }
+            
 
             <Grid container spacing={2} style={{ marginTop: "16px" }}>
               <Grid item xs={12}>

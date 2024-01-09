@@ -37,7 +37,7 @@ const Navigation = () => {
       if (user.role === "Formateur") {
         buttons.push(
           { label: "Gestion des Formations", link: "/training-management" },
-      { label: "Ajouter une Session", link: "/add-session" },
+      // { label: "Ajouter une Session", link: "/add-session" },
       { label: "Mes Formations", link: "/formations" }
         );
       } else if (user.role === "Participant") {

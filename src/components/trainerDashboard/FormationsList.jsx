@@ -4,6 +4,21 @@ import { useAuth } from '../../AuthContext/AuthProvider';
 import { Link } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 
+const getStatus = (formation) => {
+  const currentDate = new Date();
+  const startDate = new Date(formation.dateDebut);
+  const endDate = new Date(formation.dateFin);
+
+  if (currentDate < startDate) {
+    return 'À venir';
+  } else if (currentDate >= startDate && currentDate <= endDate) {
+    return 'En cours';
+  } else {
+    return 'Terminé';
+  }
+};
+
+
 function FormationsList() {
   const [formateurFormations, setFormateurFormations] = useState([]);
   const { user } = useAuth();
@@ -23,6 +38,7 @@ function FormationsList() {
           <TableCell>Titre</TableCell>
           <TableCell>Domaine</TableCell>
           <TableCell>Niveau</TableCell>
+        <TableCell>Status</TableCell>
           <TableCell>Action</TableCell>
 
           </TableRow>
@@ -33,6 +49,8 @@ function FormationsList() {
               <TableCell>{formation.titre}</TableCell>
               <TableCell>{formation.domaine}</TableCell>
               <TableCell>{formation.niveau}</TableCell>
+            <TableCell>{getStatus(formation)}</TableCell>
+
               <TableCell>
                 <Button
                   component={Link}
@@ -42,7 +60,7 @@ function FormationsList() {
                 >
                   Détails
                 </Button>
-                <Button
+                {/* <Button
                   component={Link}
                   to={`/sessions/${formation.id}`}
                   variant="contained"
@@ -50,7 +68,7 @@ function FormationsList() {
                   style={{ marginLeft: '8px' }}
                 >
                   Sessions
-                </Button>
+                </Button> */}
               </TableCell>
             </TableRow>
           ))}

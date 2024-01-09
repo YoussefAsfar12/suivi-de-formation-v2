@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Container,
   Typography,
@@ -8,6 +8,8 @@ import {
   MenuItem,
   Paper,
   Grid,
+  InputLabel,
+  FormControl
 } from "@mui/material";
 import { useAuth } from "../../AuthContext/AuthProvider";
 import {
@@ -15,7 +17,7 @@ import {
   DeleteFormation,
   getFormationByTitre,
   getUserFormations,
-  updateFormation,
+  updateFormation
 } from "../../api/api";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -25,24 +27,28 @@ import { Link } from "react-router-dom";
 const schema = yup.object().shape({
   titre: yup.string().required("Title is required"),
   niveau: yup.string().required("Level is required"),
-  description: yup.string().required("Description is required")
+  description: yup.string().required("Description is required"),
+  lieu: yup.string().required("lieu is required"),
+  capacite_max:yup.number().required("required"),
+  dateDebut: yup.date().required('Date Début is required'),
+  dateFin: yup.date().required('Date Fin is required'),
 });
 
 const styles = {
   formContainer: {
     textAlign: "center",
-    marginTop: 4,
+    marginTop: 4
   },
   paper: {
     padding: 4,
     marginTop: 2,
     marginBottom: 2,
     border: "1px solid primary.main",
-    borderRadius: 2,
+    borderRadius: 2
   },
   button: {
     marginTop: 2,
-    marginLeft: 2,
+    marginLeft: 2
   }
 };
 
@@ -56,9 +62,9 @@ const TrainerManagementPage = () => {
     handleSubmit,
     control,
     setValue,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema)
   });
 
   useEffect(() => {
@@ -76,17 +82,24 @@ const TrainerManagementPage = () => {
 
   const handleCreateFormation = async (data) => {
     try {
-      const formationExist= await getFormationByTitre(data.titre);
-      console.log(formationExist);
-    if (formationExist.length=== 0) {
-      await AddFormation(data, updateUser, user);
-      clearForm();
-      const formations = await getUserFormations(user);
-      setFormations(formations);
-
-    } else {
-      alert('formation already exist');
-    }
+      const formationExist = await getFormationByTitre(data.titre);
+      if (formationExist.length === 0) {
+        const formattedOptions = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+        const updatedFormation = {
+          ...data,
+          dateDebut: new Date(data.dateDebut).toLocaleString(undefined, formattedOptions),
+          dateFin: new Date(data.dateFin).toLocaleString(undefined, formattedOptions),
+          formateur: user.nom,
+          participants: []
+        };
+        console.log(updatedFormation)
+        await AddFormation(updatedFormation, updateUser, user);
+        clearForm();
+        const formations = await getUserFormations(user);
+        setFormations(formations);
+      } else {
+        alert("formation already exist");
+      }
     } catch (error) {
       console.error("Error creating formation", error);
     }
@@ -104,7 +117,12 @@ const TrainerManagementPage = () => {
 
   const handleUpdateFormation = async (data) => {
     try {
-      await updateFormation({ ...data, id: selectedFormationId });
+      const formattedOptions = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+      await updateFormation(
+        { ...data, id: selectedFormationId,
+        dateDebut: new Date(data.dateDebut).toLocaleString(undefined, formattedOptions),
+        dateFin: new Date(data.dateFin).toLocaleString(undefined, formattedOptions),
+      });
       clearForm();
       const formations = await getUserFormations(user);
       setFormations(formations);
@@ -119,7 +137,13 @@ const TrainerManagementPage = () => {
     setValue("domaine", formation.domaine);
     setValue("niveau", formation.niveau);
     setValue("description", formation.description);
+    setValue("lieu", formation.lieu);
+    // setValue("dateDebut", new Date(formation.date_debut));
+    // setValue("dateFin", new Date(formation.date_fin));
+    setValue("participants",formation.participants)
+    setValue("formateur",formation.formateur)
     setValue("disponible", formation.disponible);
+    setValue("capacite_max", formation.capacite_max);
     setSelectedFormationId(formation.id);
     setIsUpdateMode(true);
   };
@@ -130,6 +154,7 @@ const TrainerManagementPage = () => {
     setValue("niveau", "Débutant");
     setValue("description", "");
     setValue("disponible", false);
+    setValue("capacite_max",0)
   };
 
   return (
@@ -186,7 +211,6 @@ const TrainerManagementPage = () => {
                 {...field}
                 fullWidth
                 label="Niveau"
-              
                 sx={styles.marginBottom2}
               >
                 <MenuItem value="Débutant">Débutant</MenuItem>
@@ -212,6 +236,75 @@ const TrainerManagementPage = () => {
               />
             )}
           />
+          <Controller
+            name="lieu"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                value={field.value || ""}
+                label="Lieu"
+                margin="normal"
+                error={!!errors.lieu}
+                helperText={errors.lieu?.message}
+                sx={styles.marginBottom2}
+              />
+            )}
+          />
+          <Controller
+            name="capacite_max"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                type="number"
+                value={field.value || ""}
+                label="Capacite Max"
+                margin="normal"
+                error={!!errors.capacite_max}
+                helperText={errors.capacite_max?.message}
+                sx={styles.marginBottom2}
+              />
+            )}
+          />
+
+          <InputLabel>Date Début</InputLabel>
+          <FormControl fullWidth sx={{ marginBottom: 2 }}>
+            <Controller
+              name="dateDebut"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  type="datetime-local"
+                  fullWidth
+                  error={!!errors.dateDebut}
+                  helperText={errors.dateDebut?.message}
+                  InputProps={{}}
+                />
+              )}
+            />
+          </FormControl>
+
+          <InputLabel>Date Fin</InputLabel>
+          <FormControl fullWidth sx={{ marginBottom: 2 }}>
+            <Controller
+              name="dateFin"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  type="datetime-local"
+                  fullWidth
+                  error={!!errors.dateFin}
+                  helperText={errors.dateFin?.message}
+                  InputProps={{}}
+                />
+              )}
+            />
+          </FormControl>
 
           <Controller
             name="disponible"
@@ -281,11 +374,7 @@ const TrainerManagementPage = () => {
                 to={`/${formation.id}/participants`}
                 style={{ textDecoration: "none" }}
               >
-                <Button
-                  variant="contained"
-                  color="warning"
-                  sx={styles.button}
-                >
+                <Button variant="contained" color="warning" sx={styles.button}>
                   Participants
                 </Button>
               </Link>

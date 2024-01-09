@@ -6,7 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { addUser, getUserByEmail, getUserByName } from '../api/api';
 
 const schema = yup.object().shape({
-  nom: yup.string().min(6, 'Name must be at least 6 characters').required('Name is required'),
+  nom: yup.string().min(4, 'Name must be at least 6 characters').required('lName is required'),
+  prenom: yup.string().min(4, 'Name must be at least 6 characters').required('fName is required'),
   role: yup.string().required('Role is required'),
   email: yup.string().email('Invalid email address').required('Email is required'),
   password: yup.string().min(4, 'Password must be at least 4 characters').required('Password is required'),
@@ -19,6 +20,7 @@ const Registration = () => {
     resolver: yupResolver(schema),
     defaultValues: {
       nom: '',
+      prenom: '',
       role: 'Participant',
       email: '',
       password: '',
@@ -44,7 +46,7 @@ const Registration = () => {
       const userData =
         data.role === "Formateur" ?
         { ...data, formationsEnseignees: [] } :
-        { ...data, formationsInscrites: [] };
+        { ...data, formationsInscrites: [],certifications:[] };
   
       delete userData.confirmPassword;
       await addUser(userData);
@@ -58,13 +60,28 @@ const Registration = () => {
   return (
     <Container maxWidth="sm">
       <form onSubmit={handleSubmit(onSubmit)}>
+      <Controller
+          name="prenom"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="First Name"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              error={!!errors.prenom}
+              helperText={errors.prenom?.message}
+            />
+          )}
+        />
         <Controller
           name="nom"
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
-              label="Name"
+              label="Last Name"
               fullWidth
               margin="normal"
               variant="outlined"
@@ -73,6 +90,7 @@ const Registration = () => {
             />
           )}
         />
+       
 
         <FormControl fullWidth variant="outlined" margin="normal">
           <InputLabel>Role</InputLabel>

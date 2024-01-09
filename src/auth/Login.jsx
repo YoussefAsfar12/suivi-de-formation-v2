@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import {  getUsers } from '../api/api';
 
 const schema = yup.object().shape({
-  username: yup.string().required('Username is required'),
+  email: yup.string().required('email is required'),
   password: yup.string().required('Password is required'),
 });
 
@@ -38,7 +38,7 @@ const Login = () => {
   }, []);
 
   const handleLogin = (data) => {
-    const foundUser = users.find((user) => user.nom === data.username && user.password === data.password);
+    const foundUser = users.find((user) => user.email === data.email && user.password === data.password);
 
     if (foundUser) {
       login(foundUser);
@@ -47,7 +47,7 @@ const Login = () => {
         setShowAlert(false);
       }, 3000); 
     } else {
-      alert('Invalid username or password');
+      alert('Invalid email or password');
     }
   };
 
@@ -63,7 +63,7 @@ const Login = () => {
         </Typography>
         <form onSubmit={handleSubmit(handleLogin)}>
           <Controller
-            name="username"
+            name="email"
             control={control}
             defaultValue=""
             render={({ field }) => (
@@ -71,9 +71,9 @@ const Login = () => {
                 {...field}
                 margin="normal"
                 fullWidth
-                id="username"
-                label="Username"
-                autoComplete="username"
+                id="email"
+                label="Email"
+                autoComplete="email"
                 autoFocus
                 error={!!errors.username}
                 helperText={errors.username?.message}
