@@ -3,7 +3,7 @@ Pour exécuter ce projet localement, suivez les étapes ci-dessous :
 
 ## Installation
 Clonez le dépôt sur votre machine locale :
-git clone https://github.com/YoussefAsfar12/suivi-de-formation.git
+git clone https://github.com/YoussefAsfar12/suivi-de-formation-v2
 
 ### Accédez au répertoire du projet :
 cd suivi-de-formation
