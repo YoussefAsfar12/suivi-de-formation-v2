@@ -1,0 +1,62 @@
+{
+  "formations": [
+    {
+      "dateFin": "05/30/2024, 23:35",
+      "dateDebut": "05/16/2024, 23:35",
+      "capacite_max": 120,
+      "lieu": "casa",
+      "description": "descccc",
+      "niveau": "Intermédiaire",
+      "titre": "formation1",
+      "domaine": "programming",
+      "disponible": true,
+      "formateur": "asfar",
+      "participants": [
+        {
+          "id": 101,
+          "nom": "asfar"
+        }
+      ],
+      "id": 1,
+      "evaluations": [
+        {
+          "userId": 2,
+          "username": "asfar",
+          "commentaire": "HI",
+          "note": 4
+        },
+        {
+          "userId": 1,
+          "username": "asfar",
+          "commentaire": "nice",
+          "note": 4.5
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "nom": "asfar",
+      "prenom": "yousef",
+      "role": "Participant",
+      "email": "youssef@gmail.com",
+      "password": "123456",
+      "formationsInscrites": [
+        1
+      ],
+      "certifications": [],
+      "id": 1
+    },
+    {
+      "nom": "asfar",
+      "prenom": "aziz",
+      "role": "Formateur",
+      "email": "aziz@gmail.com",
+      "password": "123456",
+      "formationsEnseignees": [
+        1
+      ],
+      "id": 2
+    }
+  ]
+}
